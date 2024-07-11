@@ -1,0 +1,32 @@
+using JuMP, Gurobi
+
+#========= dados ========#
+
+c = [8,12,15,18]
+v0 = 45
+ptMax=[10,15,20,15]
+mes = 45
+NT = 4
+NH = 1
+demanda= 50
+meses =2 
+
+modelo = Model(Gurobi.Optimizer)
+#======== Variáveis ========#
+@variables(modelo, 
+begin
+     0 <= v[i= 1:NH, j=1:meses]
+     0 <= h[i= 1:NH, j= 1:meses]
+     0 <= t[i = 1:NT, j = 1:meses]
+end)
+
+#=========== constraint ============#
+@constraints(modelo, begin
+    sum(sum(h[i,j] for i in 1:NH)+ sum(t[i,j] for i in 1:NT) for j in 1:meses) == demanda
+
+end)
+
+est1 = [1, 1/2, 0]
+est21 = [1,1/2,0]
+est22 = [Inf, 1/2,0]
+est23 = [Inf, Inf, 0]
